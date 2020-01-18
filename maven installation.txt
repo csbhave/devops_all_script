@@ -1,0 +1,29 @@
+Install Java Commands  
+------------------
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt install openjdk-8-jdk
+sudo apt-get update
+
+Install Maven Commands  
+------------------
+cd /opt/
+sudo wget http://www-eu.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+
+sudo tar -xf apache-maven-3.6.3-bin.tar.gz
+sudo mv apache-maven-3.6.3/ apache-maven/
+
+Configuring Apache Maven Environment
+------------------
+
+$ cd /etc/profile.d/
+$ sudo gedit maven.sh
+###################################################
+# Apache Maven Environment Variables
+# MAVEN_HOME for Maven 1 - M2_HOME for Maven 2
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export M2_HOME=/opt/apache-maven
+export MAVEN_HOME=/opt/apache-maven
+export PATH=${M2_HOME}/bin:${PATH}
+
+sudo chmod +x maven.sh
+source maven.sh

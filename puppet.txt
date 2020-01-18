@@ -1,0 +1,49 @@
+Puppet
+on master:
+	Before starting, we will need to configure /etc/hosts and /etc/hostname file on Server node and agent node, so they can communicate with each other.
+	/etc/hosts:
+	192.168.1.6 puppet
+	sudo apt update
+	sudo apt install wget
+	wget https://apt.puppetlabs.com/puppet6-release-bionic.deb
+	sudo dpkg -i puppet6-release-bionic.deb
+	sudo apt update
+ 	sudo apt install -y puppetserver
+	apt policy puppetmaster
+	sudo systemctl status puppetserver.service
+	sudo nano /etc/default/puppetserver
+	JAVA_ARGS="-Xms512m -Xmx512m -Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger"
+	sudo systemctl restart puppetserver.service
+	sudo ufw allow 8140/tcp
+	
+//change code
+	sudo mkdir -p /etc/puppet/code/environments/production/manifests/
+	sudo mkdir -p /etc/puppet/code/environments/production/manifests/site.pp
+	file{'tmp/it_works.txt'				#resource type file and filer
+	ensure => present,				#make sure it exists
+	mode => '0644',					#file permission
+	content => "It works on ${ipaddress_eth0}!\n"	#print the eth0 IP fact
+	}
+
+	sudo systemctl restart puppet-master
+
+on puppet agent:
+	sudo apt update
+	sudo apt install wget
+	wget https://apt.puppetlabs.com/puppet6-release-bionic.deb
+	sudo dpkg -i puppet6-release-bionic.deb
+	sudo apt update
+ 	sudo apt install -y puppet
+ 	Before starting, we will need to configure /etc/hosts and /etc/hostname file on Server node and agent node, so they can communicate with each other.
+	/etc/hosts:
+	192.168.1.6 puppet
+	sudo systemctl start puppet
+	sudo systemctl enable puppet
+	
+	
+
+
+
+
+	
+	

@@ -1,0 +1,161 @@
+step 1 : 
+	create three instance
+	1. monitoring & configuration master
+	2. testing/stagging server
+	3. production server
+
+step 2 :
+	install putty and winscp application on user machine
+
+step 3 :
+	install jenkins on monitoring & configuraion server 
+	# /bin/bash
+	sudo apt update
+	sudo apt install openjdk-8-jdk -y
+	wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+	sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ >> /etc/apt/sources.list'
+	sudo apt update
+	sudo apt install -y jenkins
+	sudo jenkins --version
+
+	save this file as jenkins.sh on the monitoring & configuration master
+	change their permission using following command
+	sudo chmod +x jenkins.sh
+
+step 4 :
+	install ansible on monitoring & configuraion server
+		#/bin/bash -e
+		sudo apt update
+		sudo apt install software-properties-common -y
+		sudo apt-add-repository ppa:ansible/ansible -y
+		sudo apt install ansible -y
+		sudo apt update
+		sudo ansible --version
+
+	save this file as ansible.sh on the monitoring & configuration master
+	change their permission using following command
+	sudo chmod +x ansible.sh
+
+step 5 : 
+	exchange ssh keys with slaves and allow to access slaves machine
+
+step 6 :
+	configure docker file on testing/stagging server using following command
+	
+	 #!/bin/bash
+
+        if which docker >/dev/null;then
+           echo "Docker is already Installed..."
+           echo "Run Docker Container"
+            echo "Removing all old Docker Container..."
+           sudo docker rm -f $(sudo docker ps -a -q)
+           echo "Run Fresh Docker Container..."
+           docker run -it -d ubuntu
+        else
+           echo "Docker is not installed..."
+           sudo apt-get update
+           echo "Start Docker installation..."
+           sudo apt-get install docker.io
+          echo "Docker Installed Successfully..."
+          echo "Run Fresh Docker Container..."
+          sudo docker run -it -d ubuntu
+	fi
+
+	save this file as docker.sh on the testing/stagging server
+	change their permission using following command
+	sudo chmod +x docker.sh
+
+step 7 :
+	create Dockerfile
+		#Download base image ubuntu 16.04
+		FROM ubuntu:18.04
+		#Download base image apache httpd:2.4
+		FROM httpd:2.4
+		ADD . /usr/local/apache2/htdocs
+
+	save this file on your project folder where index file has located and gives name as a Dockerfile
+
+	configure github with testing server
+	this is client side configuration
+	goto working project and open git console 
+	enter following command
+	git init
+	git add .
+	git commit -m "commit message"
+	git add remote origin master "git repository"
+	git push origin master  or
+	git push origin master -f  (if 1 push command is not working then use)
+
+step 8 :
+	configure docker file on production server server using following command
+	
+	 #!/bin/bash
+
+        if which docker >/dev/null;then
+           echo "Docker is already Installed..."
+           echo "Run Docker Container"
+            echo "Removing all old Docker Container..."
+           sudo docker rm -f $(sudo docker ps -a -q)
+           echo "Run Fresh Docker Container..."
+           docker run -it -d ubuntu
+        else
+           echo "Docker is not installed..."
+           sudo apt-get update
+           echo "Start Docker installation..."
+           sudo apt-get install docker.io
+          echo "Docker Installed Successfully..."
+          echo "Run Fresh Docker Container..."
+          sudo docker run -it -d ubuntu
+	fi
+
+	save this file as docker.sh on the testing/stagging server
+	change their permission using following command
+	sudo chmod +x docker.sh
+
+step 9 :
+	goto jenkins server which is running on port localhost:8080 
+	copy given location for generating password
+	paste it into your jenkins machine using cat command 
+	copy generated password from jenkins machine 
+	paste it into jenkins site 
+	create your profile on jenkins
+
+step 10 :
+	configure jenkins server
+	goto manage jenkins > configure global security > tcp port inbound agent = random > save
+	goto global tool configuration > git > path to git executable = git > save
+	configure jenkins node 
+	goto manage jenkins > manage node > new node >name = testing_server , remote root directory path = /home/ubuntu , launch method = lanuch agent by connecting it to the master > save
+	goto manage jenkins > manage node > new node >name = production_server , remote root directory path = /home/ubuntu , launch method = lanuch agent by connecting it to the master > save
+
+step 11 :
+	connected slaves to the jenkins server
+	goto manage jenkins > manage node > testing_server > download 2 files 1. launch , 2. agent.jar
+	copy this files on to /home/ubuntu/ this location on testing server
+	goto jenkins server page and copy Run from agent command which is started with java 
+	and paste it into your testing server machine where loacted agent.jar file
+	goto manage jenkins > manage node > production_server > download 2 files 1. launch , 2. agent-jar
+	copy this files on to /home/ubuntu/ this location on production server
+	goto jenkins server page and copy Run from agent command which is started with java 
+	and paste it into your production server machine where loacted agent.jar file
+	both launch and agent.jar file are different 
+
+step 12 :
+	 git sync
+	 	goto new item >name = Git-job choose freestyle project > Restrict where this project can be run = testing_server , git = your git repository , tick this option GitHub hook trigger for GITScm polling > save
+
+	 take a build for testing server
+	 	goto new item >name = build-website choose freestyle project > Restrict where this project can be run = testing_server , add build step and select execute shell > 
+	 	bash /home/ubuntu/test.sh
+		sudo docker build /home/ubuntu/jenkins/workspace/Git-job/ -t website
+		sudo docker run -it -p 82:80 -d website
+		sudo docker run -it -p 81:80 -d website
+		> save
+
+	 take a build for prooduction server to deploy website
+	 	goto new item >name = push-production choose freestyle project >tick this option github project > project url : your git repository , Restrict where this project can be run = production_server , git = your git repository , add build step and select execute shell > 
+	 	bash /home/ubuntu/production.sh
+		sudo docker build /home/ubuntu/jenkins/workspace/push-production/ -t website
+		sudo docker run -it -p 80:80 -d website
+		> save
+

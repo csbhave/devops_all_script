@@ -1,0 +1,13 @@
+ubuntu-server:	ssh "ubuntu-master@192.168.1.8"
+testing : 192.168.1.9
+production : 192.168.1.6
+ 
+ ssh "cs-bhave@192.168.1.9"		staging
+ ssh root@productionserver
+
+cat /etc/hosts
+cat /etc/ansible/hosts
+ssh-copy-id -i ~/.ssh/id_rsa.pub  ubuntu-slave1@agent
+ssh -l ubuntu-slave1 agent
+
+ssh -l ubuntu-slave1 agent2

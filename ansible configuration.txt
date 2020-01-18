@@ -1,0 +1,14 @@
+1) install ansible on master
+2) enalbe passwordless authentication between the master and the slave
+3) write script / playbooks to automate
+
+installation
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt update
+
+sudo apt update
+sudo apt install software-properties-common
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt install ansible
+sudo apt update 
+sudo ansible --version

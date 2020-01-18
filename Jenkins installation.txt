@@ -1,0 +1,17 @@
+Jenkins installation:
+sudo apt update
+sudo apt install openjdk-8-jdk -y
+wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ >> /etc/apt/sources.list'
+sudo apt update
+sudo apt install -y jenkins
+
+jenkins password:
+f67b47ab7e9947c2936eb8e7c261aef3
+
+Url:
+192.168.1.8:8080
+username :
+csbhave
+password :
+csbhave

@@ -1,0 +1,16 @@
+start jenkins service
+
+create job
+	demojob > freestyleProject
+	select github project and gives project git repository url
+	copy projct git repository from github and paste it into git which is presented in source code management
+	select github hook trigger for gitScm pooling 
+	goto build and select execute shell
+	>sudo docker rm -f $(sudo docker ps -a -q)
+	>sudo docker build /var/lib/jenkins/workspace/demojob/ -t jenkins
+	>sudo docker run -it -p 82:80 -d jenkins
+	save the file
+
+configure github webhook
+	goto settings > webhooks > add webhooks > enter your jenkins url followed by /github-webhook (http://192.168.1.23:8080/github-webhook/) > add webhook
+

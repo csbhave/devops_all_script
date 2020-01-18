@@ -1,0 +1,34 @@
+installing jenkins on AWS
+
+1. Launch ans AWS Instance
+
+2. Connect through SSH
+
+3. Execute The following cmd
+
+sudo apt update
+sudo apt install -y openjdk-8-jdk
+wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ >> /etc/apt/sources.list'
+sudo apt update
+sudo apt install -y jenkins
+
+or 
+
+Copy given file into your Instance and Execute following cmd
+jenkins.sh
+
+4. add inbound rule
+  custom tcp	tcp	8080	anywhere	
+
+5. for set jenkins password copy following path from jenkins welcome page 
+	/var/lib/jenkins/secrets/initialAdminPassword
+  
+6. paste it into your ec2 instance followed by given command
+   sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+7. copy that password from your ec2 instance and paste it into jenkins welcome page 
+
+8. select install suggested plugins option
+
+9. Your jenkins master is ready for use

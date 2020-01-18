@@ -1,0 +1,18 @@
+ #!/bin/bash
+
+        if which docker >/dev/null;then
+           echo "Docker is already Installed..."
+           echo "Run Docker Container"
+            echo "Removing all old Docker Container..."
+           sudo docker rm -f $(sudo docker ps -a -q)
+           echo "Run Fresh Docker Container..."
+           docker run -it -d ubuntu
+        else
+           echo "Docker is not installed..."
+           sudo apt-get update
+           echo "Start Docker installation..."
+           sudo apt-get install docker.io
+          echo "Docker Installed Successfully..."
+          echo "Run Fresh Docker Container..."
+          docker run -it -d ubuntu
+fi
